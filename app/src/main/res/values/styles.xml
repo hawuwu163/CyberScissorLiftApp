@@ -1,0 +1,73 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <!--<item name="android:background">@color/windowBackground</item>-->
+    </style>
+
+    <!--main theme-->
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <!--splash theme-->
+    <style name="SplashTheme" parent="AppTheme.NoActionBar">
+        <item name="android:windowBackground">@drawable/ic_launcher_background</item>
+    </style>
+
+    <!--toolbar thme-->
+    <style name="ToolbarPopupTheme" parent="@style/ThemeOverlay.AppCompat.Dark">
+        <!--<item name="android:colorBackground">#000000</item>--> <!--这里可以改变菜单的背景色-->
+        <item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item> <!--新增一个item，用于控制menu-->
+    </style>
+
+    <style name="OverflowMenuStyle" parent="Widget.AppCompat.Light.PopupMenu.Overflow">
+        <item name="overlapAnchor">false</item>  <!--把该属性改为false即可使menu位置位于toolbar之下-->
+    </style>
+    <!--登录注册忘记密码输入theme-->
+    <style name="AppTheme.TextInputLayout">
+        <item name="android:layout_width"> match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">20dp</item>
+    </style>
+    <style name="AppTheme.TextInputEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:maxLines">1</item>
+    </style>
+    <style name="AppTheme.TextInputEditText.Phone">
+        <item name="android:maxLength">11</item>
+        <item name="android:hint">请输入手机号码</item>
+        <item name="android:inputType">phone</item>
+    </style>
+    <style name="AppTheme.TextInputEditText.Password">
+        <item name="android:maxLength">16</item>
+        <item name="android:hint">请输入手机密码</item>
+        <item name="android:inputType">textPassword</item>
+    </style>
+
+    <style name="AppTheme.Bigbutton" >
+        <item name="android:layout_marginTop">50dp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_width">320dp</item>
+        <item name="android:layout_height">50dp</item>
+    </style>
+
+    <!--主页面栏目theme-->
+    <style name="AppTheme.TextView" >
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="AppTheme.Switch">
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_alignParentEnd">true</item>
+    </style>
+</resources>

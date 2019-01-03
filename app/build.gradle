@@ -1,0 +1,87 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.cyber.ScissorLiftApp"
+        minSdkVersion 19
+        targetSdkVersion 28
+        multiDexEnabled true
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildToolsVersion '28.0.3'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true //在写本地单测的时候，会遇到android.jar(比如log.class)某个方法没有被Mock的情况，此时可以通过如下配置:
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:support-vector-drawable:28.0.0'
+    implementation 'com.android.support:support-annotations:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
+    //    multidex 在这里和defaultConfig里设置
+    implementation 'com.android.support:multidex:1.0.3'
+
+    //testImplementation-引入的依赖是java unit单元测试，是运行在当前电脑的jvm上的单元测试
+    //androidTestImplementation-引入的依赖是Android单元测试，是运行在Android环境的单元测试
+    //androidTest/java（Android单元测试，运行在当前电脑的jvm上的单元测试，执行测试的时候需要Android连接设备，速度比较慢，适合需要调用Android api的单元测试）
+    //test/java（JUnit单元测试，用来放不需要Android依赖的单元测试类，运行在当前电脑的jvm上的单元测试，速度快，适合只是对java代码功能进行单元测试）
+    //https://www.cnblogs.com/wuyun-blog/p/7081548.html 关于java 单元测试Junit4和Mock的一些总结
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    //https://www.jianshu.com/p/d214b48792d0 Android最佳Mock单元测试方案:Junit + Mockito + Powermock
+    //  mockito依赖
+    testImplementation 'org.mockito:mockito-core:2.8.47'
+    //  Powermock 依赖
+    testImplementation 'org.powermock:powermock-module-junit4:1.7.4'
+    testImplementation 'org.powermock:powermock-module-junit4-rule:1.7.4'
+    testImplementation 'org.powermock:powermock-api-mockito2:1.7.4'
+    testImplementation 'org.powermock:powermock-classloading-xstream:1.7.4'
+
+    //黄油刀套件这里放框架,项目build.gradle放插件
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    //用于扩展功能块的recycleview框架
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+
+    // AutoDispose
+    implementation 'com.uber.autodispose:autodispose:0.7.0'
+    implementation 'com.uber.autodispose:autodispose-android:0.7.0'
+    implementation 'com.uber.autodispose:autodispose-android-archcomponents:0.7.0'
+
+    // 滑动返回 https://oss.sonatype.org/content/repositories/snapshots/com/r0adkll/slidableactivity/
+    implementation 'com.r0adkll:slidableactivity:2.0.6'
+
+    // okhttp 3 高效的HTTP客户端 & okhttp的消息拦截器用于debug
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    debugImplementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+
+    // LeakCanary 内存泄漏检查工具
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+
+    //Android调试神器stetho
+    debugImplementation 'com.facebook.stetho:stetho:1.5.0'
+
+    // 图片加载
+    implementation 'com.github.bumptech.glide:glide:4.6.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
+}
