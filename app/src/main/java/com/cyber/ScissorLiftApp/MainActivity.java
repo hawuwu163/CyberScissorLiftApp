@@ -1,8 +1,9 @@
 package com.cyber.ScissorLiftApp;
 
+import android.content.Intent;
 import android.graphics.Color;
-import android.support.design.widget.AppBarLayout;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.cyber.ScissorLiftApp.adapter.MainOptionAdapter;
 import com.cyber.ScissorLiftApp.adapter.MainOptionItemDecoration;
 import com.cyber.ScissorLiftApp.module.base.BaseActivity;
 import com.cyber.ScissorLiftApp.module.bean.MainOption;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +51,6 @@ public class MainActivity extends BaseActivity {
     AppBarLayout mAppBarLayout;
     @BindView(R.id.home_rv)
     RecyclerView home_rv;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,8 +58,6 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
         initToolbarAlpha();
         initRecyclerView();
-        //        mRv.setLayoutManager(new LinearLayoutManager(this));
-//        mRv.setAdapter(new MyAdapter());
     }
     private void initRecyclerView(){
         final List<MainOption> list= new ArrayList<>();
@@ -76,22 +75,24 @@ public class MainActivity extends BaseActivity {
         home_rv.addItemDecoration(new MainOptionItemDecoration(10,3,4));
         //把LayoutManager设置给RecyclerView
         home_rv.setLayoutManager(layoutManager);
-        home_rv.post(new Runnable() {
+        home_rv.post(() -> adapter.setOnclick(new MainOptionAdapter.ClickInterface() {
             @Override
-            public void run() {
-                adapter.setOnclick(new MainOptionAdapter.ClickInterface() {
-                    @Override
-                    public void onButtonClick(View view, int position) {
-                        Toast.makeText(MainActivity.this, "button pos:"+position +"val:"+list.get(position).getId(), Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        Toast.makeText(MainActivity.this, "item pos"+position, Toast.LENGTH_SHORT).show();
-                    }
-                });
+            public void onButtonClick(View view, int position) {
+                onItemClick(view,position);
+//                Toast.makeText(MainActivity.this, "button pos:"+position +"val:"+list.get(position).getId(), Toast.LENGTH_SHORT).show();
             }
-        });
+
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent();
+                //setClass函数的第一个参数是一个Context对象
+                //Context是一个类，Activity是Context类的子类，也就是说，所有的Activity对象，都可以向上转型为Context对象
+                //setClass函数的第二个参数是一个Class对象，在当前场景下，应该传入需要被启动的Activity类的class对象
+                intent.setClass(MainActivity.this, Main2Activity.class);
+                startActivity(intent);
+                Toast.makeText(MainActivity.this, "item pos"+position, Toast.LENGTH_SHORT).show();
+            }
+        }));
     }
 
 

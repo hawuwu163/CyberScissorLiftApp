@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:id="@+id/my_item_list_detail"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        >
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/my_text1"
+            style="@style/AppTheme.TextView"
+            android:text="最大速度" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/my_switch1"
+            style="@style/AppTheme.Switch"
+             />
+    </RelativeLayout>
+
+
+</LinearLayout>
+

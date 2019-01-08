@@ -67,8 +67,7 @@
 
         <include layout="@layout/main_view" />
 
-
-
+        <!--<include layout="@layout/my_fragment" />-->
 
     </android.support.design.widget.CoordinatorLayout>
     <android.support.design.widget.NavigationView

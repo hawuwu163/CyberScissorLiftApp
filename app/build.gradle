@@ -23,7 +23,8 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     testOptions {
-        unitTests.returnDefaultValues = true //在写本地单测的时候，会遇到android.jar(比如log.class)某个方法没有被Mock的情况，此时可以通过如下配置:
+        unitTests.returnDefaultValues = true
+        //在写本地单测的时候，会遇到android.jar(比如log.class)某个方法没有被Mock的情况，此时可以通过如下配置:
     }
 }
 
@@ -63,6 +64,9 @@ dependencies {
     //用于扩展功能块的recycleview框架
     implementation 'com.android.support:recyclerview-v7:28.0.0'
 
+    //https://github.com/CymChad/BaseRecyclerViewAdapterHelper
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.42'
+
     // AutoDispose
     implementation 'com.uber.autodispose:autodispose:0.7.0'
     implementation 'com.uber.autodispose:autodispose-android:0.7.0'
@@ -84,4 +88,11 @@ dependencies {
     // 图片加载
     implementation 'com.github.bumptech.glide:glide:4.6.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
+
+    // 持久化 Cookie
+    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
+    // retrofit 2
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
 }
