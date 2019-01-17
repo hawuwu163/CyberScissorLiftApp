@@ -44,25 +44,35 @@
                 android:text="蓝牙" />
 
             <android.support.v7.widget.SwitchCompat
-                style="@style/AppTheme.Switch"
+                style="@style/AppTheme.BaseRightClickableClass"
                 />
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
+
             >
 
             <android.support.v7.widget.AppCompatTextView
                 style="@style/AppTheme.TextView"
-
                 android:text="已连接设备" />
+            <LinearLayout
+                style="@style/AppTheme.BaseRightClickableClass"
+                >
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@mipmap/ic_blue_remote"
+                    />
+                <Button
+                    style="@style/AppTheme.BaseRightClickableClass"
+                    android:id="@+id/choose_ble"
+                    android:text="cyber-mi-5"
+                    />
+            </LinearLayout>
 
-            <Button
-                style="@style/AppTheme.Switch"
-                android:text="cyber-mi-5"
-                android:background="@android:color/transparent"
-                />
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -73,8 +83,7 @@
                 android:text="PS模式" />
 
             <android.support.v7.widget.SwitchCompat
-                style="@style/AppTheme.Switch"
-
+                style="@style/AppTheme.BaseRightClickableClass"
                 />
         </RelativeLayout>
 
@@ -85,6 +94,10 @@
             <android.support.v7.widget.AppCompatTextView
                 style="@style/AppTheme.TextView"
                 android:text="恢复配置" />
+            <android.support.v7.widget.AppCompatImageButton
+                style="@style/AppTheme.BaseRightClickableClass"
+                app:srcCompat="@drawable/ic_arrow_right"
+                />
 
         </RelativeLayout>
 
@@ -96,7 +109,10 @@
             <android.support.v7.widget.AppCompatTextView
                 style="@style/AppTheme.TextView"
                 android:text="保存配置" />
-
+            <android.support.v7.widget.AppCompatImageButton
+                style="@style/AppTheme.BaseRightClickableClass"
+                app:srcCompat="@drawable/ic_arrow_right"
+            />
         </RelativeLayout>
 
     </LinearLayout>

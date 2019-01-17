@@ -64,10 +64,13 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:gravity">center</item>
     </style>
-    <style name="AppTheme.Switch">
-        <item name="android:paddingRight">10dp</item>
+    <style name="AppTheme.BaseRightClickableClass">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_alignParentEnd">true</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
+
+
 </resources>

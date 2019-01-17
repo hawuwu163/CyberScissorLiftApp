@@ -8,6 +8,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,7 +24,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
     //    private DynamicGridView gridView;
@@ -51,6 +52,8 @@ public class MainActivity extends BaseActivity {
     AppBarLayout mAppBarLayout;
     @BindView(R.id.home_rv)
     RecyclerView home_rv;
+    @BindView(R.id.choose_ble)
+    Button choose_ble;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +62,18 @@ public class MainActivity extends BaseActivity {
         initToolbarAlpha();
         initRecyclerView();
     }
+    private void initView() {
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.choose_ble:
+
+        }
+    }
+
     private void initRecyclerView(){
         final List<MainOption> list= new ArrayList<>();
         for(int i=0;i<9;i++){

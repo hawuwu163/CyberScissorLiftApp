@@ -10,6 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary true
     }
     buildTypes {
         release {
@@ -36,10 +37,8 @@ dependencies {
     implementation 'com.android.support:support-vector-drawable:28.0.0'
     implementation 'com.android.support:support-annotations:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-
     //    multidex 在这里和defaultConfig里设置
     implementation 'com.android.support:multidex:1.0.3'
-
     //testImplementation-引入的依赖是java unit单元测试，是运行在当前电脑的jvm上的单元测试
     //androidTestImplementation-引入的依赖是Android单元测试，是运行在Android环境的单元测试
     //androidTest/java（Android单元测试，运行在当前电脑的jvm上的单元测试，执行测试的时候需要Android连接设备，速度比较慢，适合需要调用Android api的单元测试）
@@ -56,43 +55,34 @@ dependencies {
     testImplementation 'org.powermock:powermock-module-junit4-rule:1.7.4'
     testImplementation 'org.powermock:powermock-api-mockito2:1.7.4'
     testImplementation 'org.powermock:powermock-classloading-xstream:1.7.4'
-
     //黄油刀套件这里放框架,项目build.gradle放插件
-    implementation 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-
+    implementation 'com.jakewharton:butterknife:9.0.0-rc2'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc2'
     //用于扩展功能块的recycleview框架
     implementation 'com.android.support:recyclerview-v7:28.0.0'
-
     //https://github.com/CymChad/BaseRecyclerViewAdapterHelper
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.42'
-
     // AutoDispose
     implementation 'com.uber.autodispose:autodispose:0.7.0'
     implementation 'com.uber.autodispose:autodispose-android:0.7.0'
     implementation 'com.uber.autodispose:autodispose-android-archcomponents:0.7.0'
-
     // 滑动返回 https://oss.sonatype.org/content/repositories/snapshots/com/r0adkll/slidableactivity/
     implementation 'com.r0adkll:slidableactivity:2.0.6'
-
     // okhttp 3 高效的HTTP客户端 & okhttp的消息拦截器用于debug
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     debugImplementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
-
     // LeakCanary 内存泄漏检查工具
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
-
     //Android调试神器stetho
     debugImplementation 'com.facebook.stetho:stetho:1.5.0'
-
     // 图片加载
     implementation 'com.github.bumptech.glide:glide:4.6.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
-
     // 持久化 Cookie
     implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
     // retrofit 2
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
+    implementation files('libs/AndroidBleApi_V1.1.5.jar')
 }

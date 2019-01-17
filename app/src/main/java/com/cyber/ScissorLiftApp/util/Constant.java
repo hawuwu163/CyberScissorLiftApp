@@ -8,5 +8,5 @@ package com.cyber.ScissorLiftApp.util;
  * @Description:
  */
 public class Constant {
-    final static String HOST = "47.107.240.29/";
+    final static String HOST = "https://www.cyber-icloud.com/";
 }
