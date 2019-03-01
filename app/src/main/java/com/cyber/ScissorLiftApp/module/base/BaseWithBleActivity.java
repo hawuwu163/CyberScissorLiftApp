@@ -36,7 +36,6 @@ public class BaseWithBleActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bindService(new Intent(this, BleService.class), mConnection, BIND_AUTO_CREATE);
-
     }
 
     @Override

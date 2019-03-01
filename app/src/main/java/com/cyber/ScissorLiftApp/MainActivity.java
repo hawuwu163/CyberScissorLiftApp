@@ -1,9 +1,14 @@
 package com.cyber.ScissorLiftApp;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,11 +21,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ble.api.DataUtil;
+import com.ble.utils.TimeUtil;
 import com.cyber.ScissorLiftApp.adapter.MainOptionAdapter;
 import com.cyber.ScissorLiftApp.adapter.MainOptionItemDecoration;
 import com.cyber.ScissorLiftApp.module.base.BaseActivity;
 import com.cyber.ScissorLiftApp.module.base.BaseWithBleActivity;
 import com.cyber.ScissorLiftApp.module.bean.MainOption;
+import com.cyber.ScissorLiftApp.module.bluetooth.BleDevice;
 import com.cyber.ScissorLiftApp.module.bluetooth.BleListActivity;
 import com.cyber.ScissorLiftApp.module.parameter.ParameterIntegerBean;
 import com.cyber.ScissorLiftApp.module.parameter.ParameterListActivity;
@@ -69,13 +76,65 @@ public class MainActivity extends BaseWithBleActivity{
     @BindView(R.id.ps_mode_switch)
     SwitchCompat ps_mode_switch;
     private long exitTime = 0;
+    private final BroadcastReceiver mLocalReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String address = intent.getStringExtra(LeProxy.EXTRA_ADDRESS);
+
+            switch (intent.getAction()) {
+                case LeProxy.ACTION_GATT_DISCONNECTED:// 断线
+                    Toast.makeText(MainActivity.this,address+"断线了",Toast.LENGTH_LONG).show();
+                    break;
+
+                case LeProxy.ACTION_RSSI_AVAILABLE: {// 更新rssi
+                }
+                break;
+
+                case LeProxy.ACTION_DATA_AVAILABLE:// 接收到从机数据
+                    displayRxData(intent);
+                    break;
+            }
+        }
+    };
+    private void displayRxData(Intent intent) {
+        String address = intent.getStringExtra(LeProxy.EXTRA_ADDRESS);
+        String uuid = intent.getStringExtra(LeProxy.EXTRA_UUID);
+        byte[] data = intent.getByteArrayExtra(LeProxy.EXTRA_DATA);
+
+        String dataStr = "timestamp: " + TimeUtil.timestamp("MM-dd HH:mm:ss.SSS") + '\n'
+                + "uuid: " + uuid + '\n'
+                + "length: " + (data == null ? 0 : data.length) + '\n';
+
+            dataStr += "data: " + DataUtil.byteArrayToHex(data) + '\n';
+        Toast.makeText(MainActivity.this,dataStr,Toast.LENGTH_LONG).show();
+
+
+    }
+    private IntentFilter makeFilter() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(LeProxy.ACTION_GATT_DISCONNECTED);
+        filter.addAction(LeProxy.ACTION_RSSI_AVAILABLE);
+        filter.addAction(LeProxy.ACTION_DATA_AVAILABLE);
+        return filter;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mLocalReceiver, makeFilter());
         ButterKnife.bind(this);
         initView();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mLocalReceiver);
+
+    }
+
     private void initView() {
         initToolbarAlpha();
         initRecyclerView();
@@ -92,16 +151,17 @@ public class MainActivity extends BaseWithBleActivity{
             return true;
         });
         ps_mode_switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            String address = LeProxy.getInstance().getConnectedDevice().getAddress();
             if (isChecked) {
                 String gotoPS = "201801340003274A";
                 byte[] data = DataUtil.hexToByteArray(gotoPS);
-                LeProxy.getInstance().send(BluetoothAdapter.getDefaultAdapter().getAddress(), data);
-                Log.e(TAG, gotoPS + " -> " + DataUtil.byteArrayToHex(data));
+                LeProxy.getInstance().send(address, data);
+                Log.e(TAG, gotoPS + " -> " + DataUtil.byteArrayToHex(data)+"["+address+"]");
             } else {
                 String exitPS = "201801340002E68A";
                 byte[] data = DataUtil.hexToByteArray(exitPS);
-                LeProxy.getInstance().send(BluetoothAdapter.getDefaultAdapter().getAddress(), data);
-                Log.e(TAG, exitPS + " -> " + DataUtil.byteArrayToHex(data));
+                LeProxy.getInstance().send(address, data);
+                Log.e(TAG, exitPS + " -> " + DataUtil.byteArrayToHex(data)+"["+address+"]");
             }
         });
     }
