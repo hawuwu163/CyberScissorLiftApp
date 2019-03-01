@@ -1,4 +1,4 @@
-package com.cyber.ScissorLiftApp;
+package com.cyber.ScissorLiftApp.module.bluetooth;
 
 import com.ble.ble.LeScanRecord;
 
@@ -9,6 +9,15 @@ public class BleDevice {
 	private LeScanRecord mRecord;
 	private int rssi;
 	private boolean oadSupported = false;
+	private boolean isConnected = false;
+
+	public boolean isConnected() {
+		return isConnected;
+	}
+
+	public void setConnected(boolean connected) {
+		isConnected = connected;
+	}
 
 	public BleDevice(String name, String address) {
 		this.name = name;
@@ -16,10 +25,23 @@ public class BleDevice {
 	}
 
 	public BleDevice(String name, String address, int rssi, byte[] scanRecord) {
-		this.name = name;
+		this.name = name==null? "":name;
 		this.address = address;
 		this.rssi = rssi;
 		this.mRecord = LeScanRecord.parseFromBytes(scanRecord);
+	}
+
+	@Override
+	public String toString() {
+		return "BleDevice{" +
+				"address='" + address + '\'' +
+				", name='" + name + '\'' +
+				", rxData='" + rxData + '\'' +
+				", mRecord=" + mRecord +
+				", rssi=" + rssi +
+				", oadSupported=" + oadSupported +
+				", isConnected=" + isConnected +
+				'}';
 	}
 
 	public boolean isOadSupported() {

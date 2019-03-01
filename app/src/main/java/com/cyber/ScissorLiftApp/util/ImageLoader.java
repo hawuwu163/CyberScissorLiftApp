@@ -23,39 +23,40 @@ public class ImageLoader extends AppGlideModule {
 
     /**
      * 普通加载
-     */
-    public static void loadCenterCrop(Context context, String url, ImageView view, int defaultResId) {
-        GlideApp.with(context)
-                .load(url)
-                .transition(withCrossFade())
-                .apply(new RequestOptions().centerCrop())
-                .into(view);
-    }
-
-    /**
-     * 带加载异常图片
-     */
-    public static void loadCenterCrop(Context context, String url, ImageView view, int defaultResId, int errorResId) {
-        GlideApp.with(context)
-                .load(url)
-                .transition(withCrossFade())
-                .apply(new RequestOptions().centerCrop().error(errorResId))
-                .into(view);
-    }
-
-    /**
-     * 带监听处理
-     */
-    public static void loadCenterCrop(Context context, String url, ImageView view, RequestListener listener) {
-        GlideApp.with(context)
-                .load(url)
-                .transition(withCrossFade())
-                .apply(new RequestOptions().centerCrop())
-                .listener(listener)
-                .into(view);
-    }
-
-    public static void loadNormal(Context context, String url, ImageView view) {
-        GlideApp.with(context).load(url).into(view);
-    }
+//     */
+//    public static void loadCenterCrop(Context context, String url, ImageView view, int defaultResId) {
+//        GlideApp.with(context)
+//                .load(url)
+//                .transition(withCrossFade())
+//                .apply(new RequestOptions().centerCrop())
+//                .into(view);
+//    }
+//
+//    /**
+//     * 带加载异常图片
+//     */
+//    public static void loadCenterCrop(Context context, String url, ImageView view, int defaultResId, int errorResId) {
+//        GlideApp.with(context)
+//                .load(url)
+//                .transition(withCrossFade())
+//                .apply(new RequestOptions().centerCrop().error(errorResId))
+//                .into(view);
+//    }
+//
+//    /**
+//     * 带监听处理
+//     *
+//     */
+//    public static void loadCenterCrop(Context context, String url, ImageView view, RequestListener listener) {
+//        GlideApp.with(context)
+//                .load(url)
+//                .transition(withCrossFade())
+//                .apply(new RequestOptions().centerCrop())
+//                .listener(listener)
+//                .into(view);
+//    }
+//
+//    public static void loadNormal(Context context, String url, ImageView view) {
+//        GlideApp.with(context).load(url).into(view);
+//    }
 }

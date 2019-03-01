@@ -84,5 +84,16 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
-    implementation files('libs/AndroidBleApi_V1.1.5.jar')
+    //蓝牙开发sdk
+    implementation files('libs/AndroidBleApi_V1.1.6.jar')
+    //适配器
+    implementation 'me.drakeet.multitype:multitype:3.4.4'
+    //json处理
+    implementation 'com.alibaba:fastjson:1.1.70.android'
+    // RxBinding
+    implementation 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.1.1'
+    //滚动选择器
+    implementation 'com.contrarywind:Android-PickerView:4.1.7'
+
+
 }

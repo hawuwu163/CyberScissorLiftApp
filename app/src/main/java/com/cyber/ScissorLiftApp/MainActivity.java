@@ -1,22 +1,30 @@
 package com.cyber.ScissorLiftApp;
 
-import android.content.Intent;
+import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ble.api.DataUtil;
 import com.cyber.ScissorLiftApp.adapter.MainOptionAdapter;
 import com.cyber.ScissorLiftApp.adapter.MainOptionItemDecoration;
 import com.cyber.ScissorLiftApp.module.base.BaseActivity;
+import com.cyber.ScissorLiftApp.module.base.BaseWithBleActivity;
 import com.cyber.ScissorLiftApp.module.bean.MainOption;
+import com.cyber.ScissorLiftApp.module.bluetooth.BleListActivity;
+import com.cyber.ScissorLiftApp.module.parameter.ParameterIntegerBean;
+import com.cyber.ScissorLiftApp.module.parameter.ParameterListActivity;
+import com.cyber.ScissorLiftApp.util.LeProxy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +32,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+public class MainActivity extends BaseWithBleActivity{
 
     private static final String TAG = "MainActivity";
     //    private DynamicGridView gridView;
@@ -52,26 +60,50 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     AppBarLayout mAppBarLayout;
     @BindView(R.id.home_rv)
     RecyclerView home_rv;
-    @BindView(R.id.choose_ble)
-    Button choose_ble;
+    @BindView(R.id.ble_switch)
+    SwitchCompat ble_switch;
+    @BindView(R.id.ble_connected)
+    RelativeLayout ble_connected;
+    @BindView(R.id.ble_name)
+    AppCompatTextView ble_name;
+    @BindView(R.id.ps_mode_switch)
+    SwitchCompat ps_mode_switch;
+    private long exitTime = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
         ButterKnife.bind(this);
-        initToolbarAlpha();
-        initRecyclerView();
+        initView();
     }
     private void initView() {
-
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.choose_ble:
-
-        }
+        initToolbarAlpha();
+        initRecyclerView();
+        ble_switch.setChecked(BluetoothAdapter.getDefaultAdapter().isEnabled());
+        ble_switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                BluetoothAdapter.getDefaultAdapter().enable();
+            } else {
+                BluetoothAdapter.getDefaultAdapter().disable();
+            }
+        });
+        ble_connected.setOnLongClickListener(v -> {
+            BleListActivity.launch();
+            return true;
+        });
+        ps_mode_switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                String gotoPS = "201801340003274A";
+                byte[] data = DataUtil.hexToByteArray(gotoPS);
+                LeProxy.getInstance().send(BluetoothAdapter.getDefaultAdapter().getAddress(), data);
+                Log.e(TAG, gotoPS + " -> " + DataUtil.byteArrayToHex(data));
+            } else {
+                String exitPS = "201801340002E68A";
+                byte[] data = DataUtil.hexToByteArray(exitPS);
+                LeProxy.getInstance().send(BluetoothAdapter.getDefaultAdapter().getAddress(), data);
+                Log.e(TAG, exitPS + " -> " + DataUtil.byteArrayToHex(data));
+            }
+        });
     }
 
     private void initRecyclerView(){
@@ -99,14 +131,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent();
-                //setClass函数的第一个参数是一个Context对象
-                //Context是一个类，Activity是Context类的子类，也就是说，所有的Activity对象，都可以向上转型为Context对象
-                //setClass函数的第二个参数是一个Class对象，在当前场景下，应该传入需要被启动的Activity类的class对象
-                intent.setClass(MainActivity.this, Main2Activity.class);
-                startActivity(intent);
-                Toast.makeText(MainActivity.this, "item pos"+position, Toast.LENGTH_SHORT).show();
-            }
+                ParameterListActivity.launch(R.string.ECU_working_parameter2,"机器模式");
+             }
         }));
     }
 
@@ -123,7 +149,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //                System.out.println("verticalOffset = [" + verticalOffset + "]" + "{" + Math.abs(verticalOffset) + "}" + "{:" + appBarLayout.getTotalScrollRange() + "}");
                 if (verticalOffset == 0) {
                     //完全展开
-                    Log.i(TAG, "onOffsetChanged: 完全展开");
+//                    Log.i(TAG, "onOffsetChanged: 完全展开");
 
                     toolbar_top.setVisibility(View.VISIBLE);
                     toolbar_folding.setVisibility(View.GONE);
@@ -131,7 +157,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()) {
                     //appBarLayout.getTotalScrollRange() == 200
                     //完全折叠
-                    Log.i(TAG, "onOffsetChanged: 完全折叠");
+//                    Log.i(TAG, "onOffsetChanged: 完全折叠");
 
                     toolbar_top.setVisibility(View.GONE);
                     toolbar_folding.setVisibility(View.VISIBLE);
@@ -140,7 +166,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     if (toolbar_top.getVisibility() == View.VISIBLE) {
 //                        //操作Toolbar1
                         int alpha = 300 - 150 - Math.abs(verticalOffset);
-                        Log.i("alpha0~200上滑下滑:", alpha + "");
+//                        Log.i("alpha0~200上滑下滑:", alpha + "");
                         setToolbarTopAlpha(alpha);
 
                     } else if (toolbar_folding.getVisibility() == View.VISIBLE) {
@@ -172,5 +198,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mImgFukuang.getDrawable().setAlpha(alpha);
         mImgSearch.getDrawable().setAlpha(alpha);
         mImgZhaoxiang.getDrawable().setAlpha(alpha);
+    }
+
+    @Override
+    public void onBackPressed() {
+        long currentTime = System.currentTimeMillis();
+        if ((currentTime - exitTime) < 2000) {
+            super.onBackPressed();
+        } else {
+            Toast.makeText(this, R.string.double_click_exit, Toast.LENGTH_SHORT).show();
+            exitTime = currentTime;
+        }
     }
 }

@@ -3,6 +3,8 @@ package com.cyber.ScissorLiftApp;
 import android.content.Context;
 import android.support.multidex.MultiDexApplication;
 
+import com.cyber.ScissorLiftApp.module.bluetooth.BleDevice;
+
 /**
  * @author Heshuai
  * @version V1.0
@@ -13,6 +15,7 @@ import android.support.multidex.MultiDexApplication;
 public class InitApp extends MultiDexApplication {
     public static Context AppContext;
 
+    public static BleDevice ConnectedBleDevice;
     /**
      * 全局App初始化
      */
@@ -27,5 +30,13 @@ public class InitApp extends MultiDexApplication {
             SdkManager.initStetho(this);
             SdkManager.initLeakCanary(this);
         }
+    }
+
+    public static BleDevice getConnectedBleDevice() {
+        return ConnectedBleDevice;
+    }
+
+    public static void setConnectedBleDevice(BleDevice connectedBleDevice) {
+        ConnectedBleDevice = connectedBleDevice;
     }
 }

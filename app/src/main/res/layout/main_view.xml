@@ -16,7 +16,7 @@
         android:id="@+id/home_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
+        android:paddingLeft="20dp"
         android:scrollbars="none"
         app:layoutManager="android.support.v7.widget.GridLayoutManager"
         tools:listitem="@layout/main_item_grid_option"
@@ -45,13 +45,14 @@
 
             <android.support.v7.widget.SwitchCompat
                 style="@style/AppTheme.BaseRightClickableClass"
+                android:id="@+id/ble_switch"
                 />
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
-
+            android:id="@+id/ble_connected"
             >
 
             <android.support.v7.widget.AppCompatTextView
@@ -66,9 +67,9 @@
                     android:layout_gravity="center_vertical"
                     android:src="@mipmap/ic_blue_remote"
                     />
-                <Button
+                <android.support.v7.widget.AppCompatTextView
                     style="@style/AppTheme.BaseRightClickableClass"
-                    android:id="@+id/choose_ble"
+                    android:id="@+id/ble_name"
                     android:text="cyber-mi-5"
                     />
             </LinearLayout>
@@ -84,6 +85,7 @@
 
             <android.support.v7.widget.SwitchCompat
                 style="@style/AppTheme.BaseRightClickableClass"
+                android:id="@+id/ps_mode_switch"
                 />
         </RelativeLayout>
 

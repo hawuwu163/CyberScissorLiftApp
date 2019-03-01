@@ -27,72 +27,41 @@ import java.util.UUID;
 
 /**
  * Created by JiaJiefei on 2017/2/17.
- * 蓝牙工具类
  */
-
-public class BleProxy {
-    private static final String TAG = "BleProxy";
+public class LeProxy {
+    private static final String TAG = "LeProxy";
 
     //各蓝牙事件的广播action
-    /**
-     * 连接超时
-     */
-    public static final String ACTION_CONNECT_TIMEOUT = ".BleProxy.ACTION_CONNECT_TIMEOUT";
-    /**
-     * 连接错误
-     */
-    public static final String ACTION_CONNECT_ERROR = ".BleProxy.ACTION_CONNECT_ERROR";
-    /**
-     * 已连接
-     */
-    public static final String ACTION_GATT_CONNECTED = ".BleProxy.ACTION_GATT_CONNECTED";
-    /**
-     * 已断开
-     */
-    public static final String ACTION_GATT_DISCONNECTED = ".BleProxy.ACTION_GATT_DISCONNECTED";
-    /**
-     * 已发现的服务
-     */
-    public static final String ACTION_GATT_SERVICES_DISCOVERED = ".BleProxy.ACTION_GATT_SERVICES_DISCOVERED";
-    /**
-     * 已接收到数据
-     */
-    public static final String ACTION_DATA_AVAILABLE = ".BleProxy.ACTION_DATA_AVAILABLE";
-    /**
-     * 已接收到RSSI值
-     */
-    public static final String ACTION_RSSI_AVAILABLE = ".BleProxy.ACTION_RSSI_AVAILABLE";
-    /**
-     * MTU已改变
-     */
-    public static final String ACTION_MTU_CHANGED = ".BleProxy.ACTION_MTU_CHANGED";
+    public static final String ACTION_CONNECT_TIMEOUT = ".LeProxy.ACTION_CONNECT_TIMEOUT";
+    public static final String ACTION_CONNECT_ERROR = ".LeProxy.ACTION_CONNECT_ERROR";
+    public static final String ACTION_GATT_CONNECTED = ".LeProxy.ACTION_GATT_CONNECTED";
+    public static final String ACTION_GATT_DISCONNECTED = ".LeProxy.ACTION_GATT_DISCONNECTED";
+    public static final String ACTION_GATT_SERVICES_DISCOVERED = ".LeProxy.ACTION_GATT_SERVICES_DISCOVERED";
+    public static final String ACTION_DATA_AVAILABLE = ".LeProxy.ACTION_DATA_AVAILABLE";
+    public static final String ACTION_RSSI_AVAILABLE = ".LeProxy.ACTION_RSSI_AVAILABLE";
+    public static final String ACTION_MTU_CHANGED = ".LeProxy.ACTION_MTU_CHANGED";
 
-    public static final String EXTRA_ADDRESS = ".BleProxy.EXTRA_ADDRESS";
-    public static final String EXTRA_DATA = ".BleProxy.EXTRA_DATA";
-    public static final String EXTRA_UUID = ".BleProxy.EXTRA_UUID";
-    public static final String EXTRA_RSSI = ".BleProxy.EXTRA_RSSI";
-    public static final String EXTRA_MTU = ".BleProxy.EXTRA_MTU";
-    public static final String EXTRA_STATUS = ".BleProxy.EXTRA_STATUS";
+    public static final String EXTRA_ADDRESS = ".LeProxy.EXTRA_ADDRESS";
+    public static final String EXTRA_DATA = ".LeProxy.EXTRA_DATA";
+    public static final String EXTRA_UUID = ".LeProxy.EXTRA_UUID";
+    public static final String EXTRA_RSSI = ".LeProxy.EXTRA_RSSI";
+    public static final String EXTRA_MTU = ".LeProxy.EXTRA_MTU";
+    public static final String EXTRA_STATUS = ".LeProxy.EXTRA_STATUS";
 
-    private static BleProxy mInstance;
+    private static LeProxy mInstance;
 
     private BleService mBleService;
     private boolean mEncrypt = false;
 
-    private BleProxy() {
+    private LeProxy() {
     }
 
-    /**
-     * 获取单例
-     * @return
-     */
-    public static BleProxy getInstance() {
+    public static LeProxy getInstance() {
         if (mInstance == null) {
-            mInstance = new BleProxy();
+            mInstance = new LeProxy();
         }
         return mInstance;
     }
-
 
     public void setBleService(IBinder binder) {
         mBleService = ((BleService.LocalBinder) binder).getService(mBleCallBack);
@@ -115,11 +84,6 @@ public class BleProxy {
         return null;
     }
 
-    /**
-     * @param address 从机的mac
-     * @param autoConnect 断线后是否重新连接
-     * @return 连接成功
-     */
     public boolean connect(String address, boolean autoConnect) {
         if (mBleService != null) {
             return mBleService.connect(address, autoConnect);
@@ -143,15 +107,23 @@ public class BleProxy {
     /**
      * 获取已连接的设备
      */
+    @SuppressWarnings("unchecked")
     public List<BluetoothDevice> getConnectedDevices() {
         if (mBleService != null) {
-            return mBleService.getConnectedDevices();
+            return (List<BluetoothDevice>)mBleService.getConnectedDevices();
         }
         return new ArrayList<>();
     }
-
     /**
-     *  向默认通道0x1001发送数据
+     * 获取第一个已连接的设备
+     */
+    public BluetoothDevice getConnectedDevice() {
+        if (mBleService!=null && mBleService.getConnectedDevices().size()>0)
+            return (BluetoothDevice) mBleService.getConnectedDevices().get(0);
+        return null;
+    }
+    /**
+     * 向默认通道0x1001发送数据
      *
      * @param address 设备地址
      * @param data    发送的数据
@@ -251,10 +223,8 @@ public class BleProxy {
         return false;
     }
 
-    /**
-     * 这里集合了所有的蓝牙交互事件
-     * 注意事项：回调方法所在线程不能有阻塞操作，否则可能导致数据发送失败或者某些方法无法正常回调！！！
-     */
+    //这里集合了所有的蓝牙交互事件
+    //注意事项：回调方法所在线程不能有阻塞操作，否则可能导致数据发送失败或者某些方法无法正常回调！！！
     private final BleCallBack mBleCallBack = new BleCallBack() {
         @Override
         public void onConnected(String address) {
@@ -286,7 +256,7 @@ public class BleProxy {
 
         @Override
         public void onServicesDiscovered(String address) {
-            // !!!检索服务成功，到这一步才可以与从机进行数据交互，有些手机可能需要延时几百毫秒才能数据交互
+            //!!!检索服务成功，到这一步才可以与从机进行数据交互，有些手机可能需要延时几百毫秒才能数据交互
             Log.i(TAG, "onServicesDiscovered() - " + address);
             new Timer().schedule(new ServicesDiscoveredTask(address), 300, 100);
         }
@@ -393,7 +363,7 @@ public class BleProxy {
         public void run() {
             switch (i) {
                 case 0:
-                    //TODO 打开模组默认的数据接收通道【0x1002】，这一步成功才能保证APP收到数据
+                    // 打开模组默认的数据接收通道【0x1002】，这一步成功才能保证APP收到数据
                     boolean success = mBleService.enableNotification(address);
                     Log.i(TAG, "Enable 0x1002 notification: " + success);
                     break;

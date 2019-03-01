@@ -13,7 +13,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             xmlns:tools="http://schemas.android.com/tools"
-            tools:listitem="@layout/ble_item_list_device"
+            tools:listitem="@layout/item_ble_device"
             >
         </ListView>
     </android.support.v4.widget.SwipeRefreshLayout>

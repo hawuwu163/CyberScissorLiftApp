@@ -2,6 +2,288 @@
     <string name="app_name">CyberScissorLiftApp</string>
     <string name="title_activity_main">主页</string>
 
+    <!-- 扫描LE -->
+    <string name="scan_connected">已连接</string>
+    <string name="scan_disconnected">已断开</string>
+    <string name="scan_connect_timeout">连接超时</string>
+    <string name="scan_connection_error">连接异常</string>
+    <string name="scan_bt_disabled">蓝牙未打开</string>
+    <string name="unknown_device">未知设备</string>
+
+    <!--蓝牙tips-->
+    <string name="scan_tips_location_service_disabled">您的安卓系统扫描蓝牙设备需要获取位置权限</string>
+    <string name="scan_tips_no_location_permission">未获得位置权限，无法扫描设备</string>
+    <string name="no_read_external_storage_permission">加载本地文件需要读写手机存储的权限</string>
+    <string name="to_grant_permission">去授权</string>
+    <string name="to_enable">开启</string>
+
     <!-- TODO: Remove or change this placeholder text -->
+    <!--view action-->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="network_error">网络不给力</string>
+    <string name="bluetooth_error">网络不给力</string>
+    <string name="loading">加载中</string>
+    <string name="no_more_content">没有更多了</string>
+    <string name="double_click_exit">再按一次退出程序</string>
+    <string name="double_click_exit_edit_mode">再按一次退出编辑模式</string>
+
+    <!--menu action-->
+    <string name="action_goto_edit_mode">修改</string>
+    <string name="action_finished">完成</string>
+    <string name="action_exit">退出</string>
+    <string name="action_share">分享</string>
+
+    <!--protocol content-->
+    <string name="ECU_working_parameter2">
+        [{  \"name\": \"机器模式代码\",
+            \"description\": \"\",
+            \"val\": \"3\",
+            \"measurementUnit\": \"\",
+            \"type\": 0,
+            \"limit\": \"\"
+          },
+          {
+            \"name\": \"机器类型\",
+            \"description\": \"0：大液压；1：大电驱；2：小电驱；3：小液压\",
+            \"val\": \"2\",
+            \"measurementUnit\": \"\",
+            \"type\": 0,
+            \"limit\": [0,3]
+          },
+          {
+            \"name\": \"防夹手\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"0\",
+            \"measurementUnit\": \"\",
+            \"type\": 2,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"动作报警\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"1\",
+            \"measurementUnit\": \"\",
+            \"type\": 1,
+            \"limit\": [0,1]
+          },
+        {
+            \"name\": \"机器类型\",
+            \"description\": \"0：大液压；1：大电驱；2：小电驱；3：小液压\",
+            \"val\": \"2\",
+            \"measurementUnit\": \"\",
+            \"type\": 0,
+            \"limit\": [0,3]
+          },
+          {
+            \"name\": \"防夹手\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"0\",
+            \"measurementUnit\": \"\",
+            \"type\": 2,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"动作报警\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"1\",
+            \"measurementUnit\": \"\",
+            \"type\": 1,
+            \"limit\": [0,1]
+          },
+        {
+            \"name\": \"机器类型\",
+            \"description\": \"0：大液压；1：大电驱；2：小电驱；3：小液压\",
+            \"val\": \"2\",
+            \"measurementUnit\": \"\",
+            \"type\": 0,
+            \"limit\": [0,3]
+          },
+          {
+            \"name\": \"防夹手\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"0\",
+            \"measurementUnit\": \"\",
+            \"type\": 2,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"动作报警\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"1\",
+            \"measurementUnit\": \"\",
+            \"type\": 1,
+            \"limit\": [0,1]
+          },
+        {
+            \"name\": \"机器类型\",
+            \"description\": \"0：大液压；1：大电驱；2：小电驱；3：小液压\",
+            \"val\": \"2\",
+            \"measurementUnit\": \"兆帕\",
+            \"type\": 0,
+            \"limit\": [0,3]
+          },
+          {
+            \"name\": \"防夹手\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"0\",
+            \"measurementUnit\": \"米\",
+            \"type\": 2,
+            \"limit\": [0,1,5,100]
+          },
+          {
+            \"name\": \"动作报警\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"1\",
+            \"measurementUnit\": \"\",
+            \"type\": 1,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"亏电报警\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"0\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"称重\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"1\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"坑洞保护\",
+            \"description\": \"0：有效；1：无效\",
+            \"val\": \"0\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"压力开关\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"1\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"速度阀控制\",
+            \"description\": \"0：高速有效；1：低速有效\",
+            \"val\": \"0\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"水平倾角功能\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"1\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"高度倾角功能\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"0\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          }
+        ]
+    </string>
+    <string name="ECU_working_parameter3">
+        [{  \"name\": \"机器模式代码\",
+            \"description\": \"\",
+            \"val\": \"3\",
+            \"measurementUnit\": \"\",
+            \"type\": 0,
+            \"limit\": \"\"
+          },
+          {
+            \"name\": \"机器类型\",
+            \"description\": \"0：大液压；1：大电驱；2：小电驱；3：小液压\",
+            \"val\": \"2\",
+            \"measurementUnit\": \"\",
+            \"type\": 0,
+            \"limit\": [0,3]
+          },
+          {
+            \"name\": \"防夹手\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"0\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"动作报警\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"1\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"亏电报警\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"0\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"称重\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"1\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"坑洞保护\",
+            \"description\": \"0：有效；1：无效\",
+            \"val\": \"0\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"压力开关\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"1\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"速度阀控制\",
+            \"description\": \"0：高速有效；1：低速有效\",
+            \"val\": \"0\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"水平倾角功能\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"1\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          },
+          {
+            \"name\": \"高度倾角功能\",
+            \"description\": \"0：无效；1：有效\",
+            \"val\": \"0\",
+            \"measurementUnit\": \"\",
+            \"type\": 3,
+            \"limit\": [0,1]
+          }
+        ]
+    </string>
 </resources>
