@@ -1,4 +1,4 @@
-package com.cyber.ScissorLiftApp.module.bean;
+package com.cyber.ScissorLiftApp.module.mainOption;
 
 public class MainOption {
     private int ImageId;

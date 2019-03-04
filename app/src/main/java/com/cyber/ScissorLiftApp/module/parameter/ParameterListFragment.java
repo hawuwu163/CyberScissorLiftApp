@@ -36,11 +36,12 @@ public class ParameterListFragment extends BaseListFragment<IParameterList.Prese
     public boolean isEditStatus = false;
     private Menu menu;
     Observable<String> observable;
-    public static ParameterListFragment newInstance(int jsonList,String title) {
+
+    public static ParameterListFragment newInstance(int jsonList, String title) {
         ParameterListFragment instance = new ParameterListFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(JSON_LIST, jsonList);
-        bundle.putString(TITLE,title);
+        bundle.putString(TITLE, title);
         instance.setArguments(bundle);
         return instance;
     }
@@ -61,14 +62,11 @@ public class ParameterListFragment extends BaseListFragment<IParameterList.Prese
     protected void initData() {
         Bundle arguments = getArguments();
         int jsonListId = 0;
-        if (arguments != null) {
-            jsonListId = arguments.getInt(JSON_LIST);
-        }
-        if(jsonListId == -1) jsonList = "";
+        if (arguments != null) jsonListId = arguments.getInt(JSON_LIST);
+        if (jsonListId == -1) jsonList = "";
         else jsonList = getContext().getResources().getString(jsonListId);
         title = arguments.getString(TITLE);
         onLoadData("0");
-        setMenuShow();
     }
 
     @Override
@@ -82,7 +80,7 @@ public class ParameterListFragment extends BaseListFragment<IParameterList.Prese
 
         adapter = new MultiTypeAdapter(oldItems);
         //注册muiltitype的item viewholder
-        Register.registerParameterListItem(adapter,oldItems);
+        Register.registerParameterListItem(adapter, (ParameterListPresenter) presenter);
         recyclerView.setAdapter(adapter);
          /* 如果需要划到底部加载更多数据则不需注释该块
         recyclerView.addOnScrollListener(new OnLoadMoreListener() {
@@ -100,24 +98,23 @@ public class ParameterListFragment extends BaseListFragment<IParameterList.Prese
 
     @Override
     public void onRefresh() {
-        if(!isEditStatus)
-        presenter.doRefresh();
+        if (!isEditStatus)
+            presenter.doRefresh();
     }
 
     /**
-     * @param arg
-     * arg[0] 0:只读模式 1:编辑模式
-     * arg[1] if exist:编辑模式下list定位到第arg[1]个item
+     * @param arg arg[0] 0:只读模式 1:编辑模式
+     *            arg[1] if exist:编辑模式下list定位到第arg[1]个item
      */
     @Override
-    public void onLoadData(String...arg) {
-        if("0".equals(arg[0])){
+    public void onLoadData(String... arg) {
+        if (arg.length==0||"0".equals(arg[0])) {
             onShowLoading();
-            presenter.doLoadData(jsonList,"0");
+            presenter.doLoadData(jsonList, "0");
         } else if ("1".equals(arg[0])) {
-            presenter.doLoadData(jsonList,"1");
-            if (arg.length==2)
-            recyclerView.smoothScrollToPosition(Integer.parseInt(arg[1]));
+            presenter.doLoadData(jsonList, "1");
+            if (arg.length == 2)
+                recyclerView.smoothScrollToPosition(Integer.parseInt(arg[1]));
         }
     }
 
@@ -141,30 +138,24 @@ public class ParameterListFragment extends BaseListFragment<IParameterList.Prese
 
     @Override
     public void setPresenter(IParameterList.Presenter presenter) {
-        if (null == presenter) {
-            this.presenter = new ParameterListPresenter(this);
-        }
-
+        if (null == presenter) this.presenter = new ParameterListPresenter(this);
     }
 
     @Override
     public void fetchData() {
-
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_parameter_list, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
+
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        if (this.menu == null) {
-            this.menu = menu;
-        }
-        setMenuShow();
+        if (this.menu == null) this.menu = menu;
         super.onPrepareOptionsMenu(menu);
+        setMenuShow();
     }
 
     void setMenuShow() {
@@ -178,52 +169,35 @@ public class ParameterListFragment extends BaseListFragment<IParameterList.Prese
             menu.findItem(R.id.action_finish).setVisible(false);
         }
     }
+
     void gotoEditMode() {
         isEditStatus = true;
         setMenuShow();//设置右上角toolbar按键
         swipeRefreshLayout.setOnRefreshListener(this::onHideLoading);
     }
+
     void exitEditMode() {
         isEditStatus = false;
         setMenuShow();
         swipeRefreshLayout.setOnRefreshListener(this);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            /*
-             * 分享该app
-             */
-            case R.id.action_share:
+            case R.id.action_share: //分享该app
                 Toast.makeText(getContext(), "share", Toast.LENGTH_LONG).show();
                 break;
-            /*
-              进入编辑模式
-             */
-            case R.id.action_goto_edit_mode:
+            case R.id.action_goto_edit_mode: //进入编辑模式
                 gotoEditMode();
                 onLoadData("1");
                 Log.d(TAG, "onOptionsItemSelected: goto edit mode");
-                //1.接收到修改的信息
-                observable
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(s -> {
-                            String[] args = s.split(" ");
-                            Toast.makeText(mContext, s, Toast.LENGTH_LONG).show();
-                            Log.d(TAG, "onOptionsItemSelected: "+ParameterListFragment.TAG+": "+s);
-                            //2.presenter修改数据
-                            presenter.doLoadData(jsonList,"1",args);
-                        });
                 break;
-            /*
-             * 编辑完成,检测蓝牙通讯及设置是否成功,做出下一步反馈
-             */
-            case R.id.action_finish:
+            case R.id.action_finish: //编辑完成,检测蓝牙通讯及设置是否成功,做出下一步反馈
                 //TODO 蓝牙通讯并检测是否成功
                 exitEditMode();
                 onLoadData("0");
-                Log.d(TAG, "onOptionsItemSelected: action_finish"+adapter.getItems());
+                Log.d(TAG, "onOptionsItemSelected: action_finish" + adapter.getItems());
                 break;
         }
         return super.onOptionsItemSelected(item);

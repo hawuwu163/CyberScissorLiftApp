@@ -41,13 +41,14 @@ public class BleListPresenter implements IBleList.Presenter {
 
     @Override
     public void doLoadData() {
-        Log.d(TAG, "doLoadData: start");
 
         bleDeviceList.clear();
         BluetoothDevice device = LeProxy.getInstance().getConnectedDevice();
         if (device != null) {
             bleDeviceList.add(new BleDevice(device.getName(), device.getAddress()));
         }
+        Log.d(TAG, "doLoadData: start,connected device:"+device);
+        doSetAdaper();
         LeScanner.startScan(new OnLeScanListener() {
             @Override
             public void onScanStart() {

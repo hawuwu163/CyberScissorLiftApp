@@ -1,10 +1,12 @@
 package com.cyber.ScissorLiftApp.module.base;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -18,8 +20,9 @@ import com.cyber.ScissorLiftApp.util.LeProxy;
  * @date 2019/3/1 15:10
  * @Description:
  */
-public class BaseWithBleActivity extends BaseActivity {
+public abstract class BaseWithBleActivity extends BaseActivity {
     private static final String TAG = "BaseWithBleActivity";
+    protected LeProxy LeProxyInstance = LeProxy.getInstance();
     private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
@@ -32,6 +35,7 @@ public class BaseWithBleActivity extends BaseActivity {
             LeProxy.getInstance().setBleService(service);
         }
     };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,4 +47,8 @@ public class BaseWithBleActivity extends BaseActivity {
         super.onDestroy();
         unbindService(mConnection);
     }
+
+    public abstract void onReceiveBleBroadcast(Context context, @NonNull Intent intent);
+
+
 }

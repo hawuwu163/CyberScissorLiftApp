@@ -40,7 +40,8 @@ public class LeProxy {
     public static final String ACTION_DATA_AVAILABLE = ".LeProxy.ACTION_DATA_AVAILABLE";
     public static final String ACTION_RSSI_AVAILABLE = ".LeProxy.ACTION_RSSI_AVAILABLE";
     public static final String ACTION_MTU_CHANGED = ".LeProxy.ACTION_MTU_CHANGED";
-
+    public static final String ACTION_WRITE_SUCCESS = ".LeProxy.ACTION_WRITE_SUCCESS";
+    public static final String ACTION_WRITE_FAILED = ".LeProxy.ACTION_WRITE_FAILED";
     public static final String EXTRA_ADDRESS = ".LeProxy.EXTRA_ADDRESS";
     public static final String EXTRA_DATA = ".LeProxy.EXTRA_DATA";
     public static final String EXTRA_UUID = ".LeProxy.EXTRA_UUID";
@@ -262,6 +263,12 @@ public class LeProxy {
         }
 
 
+        /**
+         * 写入成功后,如果设置成功,蓝牙会返回相同的数据作为设置成功的反馈
+         * 这里接收到数据后通过广播,再去做判断是否设置成成功
+         * @param address
+         * @param characteristic
+         */
         @Override
         public void onCharacteristicChanged(String address, BluetoothGattCharacteristic characteristic) {
             //接收到模块数据
@@ -269,8 +276,7 @@ public class LeProxy {
             Log.i(TAG, "onCharacteristicChanged() - " + address + " uuid=" + characteristic.getUuid().toString()
                     + "\n len=" + (data == null ? 0 : data.length)
                     + " [" + DataUtil.byteArrayToHex(data) + ']');
-
-            updateBroadcast(address, characteristic);
+            updateBroadcast(address, ACTION_DATA_AVAILABLE,characteristic);
         }
 
         @Override
@@ -280,10 +286,16 @@ public class LeProxy {
                 Log.i(TAG, "onCharacteristicRead() - " + address + " uuid=" + characteristic.getUuid().toString()
                         + "\n len=" + characteristic.getValue().length
                         + " [" + DataUtil.byteArrayToHex(characteristic.getValue()) + ']');
-                updateBroadcast(address, characteristic);
+                updateBroadcast(address, ACTION_DATA_AVAILABLE, characteristic);
             }
         }
 
+        /**
+         * 写入成功判断
+         * @param address
+         * @param characteristic
+         * @param status
+         */
         @Override
         public void onCharacteristicWrite(String address, BluetoothGattCharacteristic characteristic, int status) {
             //调试时可以在这里打印status来看数据有没有发送成功
@@ -294,6 +306,9 @@ public class LeProxy {
                 Log.i(TAG, "onCharacteristicWrite() - " + address + ", " + uuid
                         + "\n len=" + characteristic.getValue().length
                         + " [" + DataUtil.byteArrayToHex(characteristic.getValue()) + ']');
+                updateBroadcast(address, ACTION_WRITE_SUCCESS, characteristic);
+            } else {
+                updateBroadcast(address, ACTION_WRITE_FAILED, characteristic);
             }
         }
 
@@ -336,8 +351,8 @@ public class LeProxy {
         LocalBroadcastManager.getInstance(mBleService).sendBroadcast(intent);
     }
 
-    private void updateBroadcast(String address, BluetoothGattCharacteristic characteristic) {
-        Intent intent = new Intent(ACTION_DATA_AVAILABLE);
+    private void updateBroadcast(String address, String action,BluetoothGattCharacteristic characteristic) {
+        Intent intent = new Intent(action);
         intent.putExtra(EXTRA_ADDRESS, address);
         intent.putExtra(EXTRA_UUID, characteristic.getUuid().toString());
         intent.putExtra(EXTRA_DATA, characteristic.getValue());

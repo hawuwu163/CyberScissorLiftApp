@@ -201,5 +201,6 @@ public class BleListFragment extends BaseListFragment<IBleList.Presenter> implem
                 .setMessage(msgId)
                 .setPositiveButton(okBtnTextId, okListener)
                 .setNegativeButton(android.R.string.cancel, (dialog, which) -> getActivity().finish()).show();
+
     }
 }

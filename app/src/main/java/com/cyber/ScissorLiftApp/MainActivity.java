@@ -3,17 +3,22 @@ package com.cyber.ScissorLiftApp;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -22,27 +27,33 @@ import android.widget.Toast;
 
 import com.ble.api.DataUtil;
 import com.ble.utils.TimeUtil;
-import com.cyber.ScissorLiftApp.adapter.MainOptionAdapter;
-import com.cyber.ScissorLiftApp.adapter.MainOptionItemDecoration;
-import com.cyber.ScissorLiftApp.module.base.BaseActivity;
+import com.cyber.ScissorLiftApp.adapter.Register;
 import com.cyber.ScissorLiftApp.module.base.BaseWithBleActivity;
-import com.cyber.ScissorLiftApp.module.bean.MainOption;
-import com.cyber.ScissorLiftApp.module.bluetooth.BleDevice;
+import com.cyber.ScissorLiftApp.module.mainOption.MainOption;
 import com.cyber.ScissorLiftApp.module.bluetooth.BleListActivity;
-import com.cyber.ScissorLiftApp.module.parameter.ParameterIntegerBean;
-import com.cyber.ScissorLiftApp.module.parameter.ParameterListActivity;
 import com.cyber.ScissorLiftApp.util.LeProxy;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import me.drakeet.multitype.Items;
+import me.drakeet.multitype.MultiTypeAdapter;
+
+import static com.cyber.ScissorLiftApp.Filter.makeFilter;
 
 public class MainActivity extends BaseWithBleActivity{
 
     private static final String TAG = "MainActivity";
-    //    private DynamicGridView gridView;
     @BindView(R.id.img_zhangdan)
     ImageView mImgZhangdan;
     @BindView(R.id.img_zhangdan_txt)
@@ -66,7 +77,7 @@ public class MainActivity extends BaseWithBleActivity{
     @BindView(R.id.appBarLayout)
     AppBarLayout mAppBarLayout;
     @BindView(R.id.home_rv)
-    RecyclerView home_rv;
+    RecyclerView recyclerView;
     @BindView(R.id.ble_switch)
     SwitchCompat ble_switch;
     @BindView(R.id.ble_connected)
@@ -76,28 +87,33 @@ public class MainActivity extends BaseWithBleActivity{
     @BindView(R.id.ps_mode_switch)
     SwitchCompat ps_mode_switch;
     private long exitTime = 0;
-    private final BroadcastReceiver mLocalReceiver = new BroadcastReceiver() {
+    private MultiTypeAdapter adapter;
+    private Items items = new Items();
+    private ProgressHandler progressHandler = new ProgressHandler();
+    private BroadcastReceiver mLocalReceiver;
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            String address = intent.getStringExtra(LeProxy.EXTRA_ADDRESS);
-
-            switch (intent.getAction()) {
-                case LeProxy.ACTION_GATT_DISCONNECTED:// 断线
-                    Toast.makeText(MainActivity.this,address+"断线了",Toast.LENGTH_LONG).show();
-                    break;
-
-                case LeProxy.ACTION_RSSI_AVAILABLE: {// 更新rssi
-                }
+    @Override
+    public void onReceiveBleBroadcast(Context context, @NonNull Intent intent) {
+        String address = intent.getStringExtra(LeProxy.EXTRA_ADDRESS);
+        switch (intent.getAction()) {
+            case LeProxy.ACTION_GATT_DISCONNECTED:// 断线
+                Toast.makeText(MainActivity.this,address+"断线了",Toast.LENGTH_LONG).show();
                 break;
+            case LeProxy.ACTION_RSSI_AVAILABLE: // 更新rssi
 
-                case LeProxy.ACTION_DATA_AVAILABLE:// 接收到从机数据
-                    displayRxData(intent);
-                    break;
-            }
+                break;
+            case LeProxy.ACTION_DATA_AVAILABLE:// 接收到从机数据
+                displayRxData(intent);
+                break;
+            case LeProxy.ACTION_WRITE_SUCCESS:
+
+                break;
+            case LeProxy.ACTION_WRITE_FAILED:
+
+                break;
         }
-    };
+    }
+
     private void displayRxData(Intent intent) {
         String address = intent.getStringExtra(LeProxy.EXTRA_ADDRESS);
         String uuid = intent.getStringExtra(LeProxy.EXTRA_UUID);
@@ -110,19 +126,13 @@ public class MainActivity extends BaseWithBleActivity{
             dataStr += "data: " + DataUtil.byteArrayToHex(data) + '\n';
         Toast.makeText(MainActivity.this,dataStr,Toast.LENGTH_LONG).show();
 
+    }
 
-    }
-    private IntentFilter makeFilter() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(LeProxy.ACTION_GATT_DISCONNECTED);
-        filter.addAction(LeProxy.ACTION_RSSI_AVAILABLE);
-        filter.addAction(LeProxy.ACTION_DATA_AVAILABLE);
-        return filter;
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+        mLocalReceiver = new MyReceiver(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(mLocalReceiver, makeFilter());
         ButterKnife.bind(this);
         initView();
@@ -132,7 +142,6 @@ public class MainActivity extends BaseWithBleActivity{
     protected void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mLocalReceiver);
-
     }
 
     private void initView() {
@@ -151,101 +160,122 @@ public class MainActivity extends BaseWithBleActivity{
             return true;
         });
         ps_mode_switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            String address = LeProxy.getInstance().getConnectedDevice().getAddress();
-            if (isChecked) {
-                String gotoPS = "201801340003274A";
-                byte[] data = DataUtil.hexToByteArray(gotoPS);
-                LeProxy.getInstance().send(address, data);
-                Log.e(TAG, gotoPS + " -> " + DataUtil.byteArrayToHex(data)+"["+address+"]");
-            } else {
-                String exitPS = "201801340002E68A";
-                byte[] data = DataUtil.hexToByteArray(exitPS);
-                LeProxy.getInstance().send(address, data);
-                Log.e(TAG, exitPS + " -> " + DataUtil.byteArrayToHex(data)+"["+address+"]");
-            }
+            String address = LeProxyInstance.getConnectedDevice().getAddress();
+            String code = isChecked?  "201801340003274A":"201801340002E68A";
+            byte[] data = DataUtil.hexToByteArray(code);
+            LeProxyInstance.send(address, data);
+            Log.e(TAG, "ps_mode_switch: "+isChecked + code +" -> " + DataUtil.byteArrayToHex(data)+"["+address+"]");
+            View dialogView = LayoutInflater.from(MainActivity.this).inflate(R.layout.dialog_text,null);
+            TextView status = findViewById(R.id.dialog_text);
+
+            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+                    .create();
+            progressHandler.setDialog(alertDialog);
+            Observable
+                    .create((ObservableOnSubscribe<Integer>) emitter -> {
+                        //TODO 蓝牙发送相关的事情
+                        int res = 1;
+                        emitter.onNext(1);
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<Integer>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onNext(Integer integer) {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
+
         });
     }
+    private static final class ProgressHandler extends Handler {
 
-    private void initRecyclerView(){
-        final List<MainOption> list= new ArrayList<>();
-        for(int i=0;i<9;i++){
-            list.add(new MainOption(R.drawable.ic_tmp_83,"速度参数"+i,i));
+        private WeakReference<DialogInterface> Dialog = null;
+
+        public WeakReference<DialogInterface> getDialog() {
+            return Dialog;
         }
-        //实例化Adapter并且给RecyclerView设上
-        final MainOptionAdapter adapter = new MainOptionAdapter(list);
-        home_rv.setAdapter(adapter);
 
-        // 如果我们想要一个GridView形式的RecyclerView，那么在LayoutManager上我们就要使用GridLayoutManager
-        // 实例化一个GridLayoutManager，列数为3
-        final GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
-        //把我们自定义的ItemDecoration设置给RecyclerView
-        home_rv.addItemDecoration(new MainOptionItemDecoration(10,3,4));
-        //把LayoutManager设置给RecyclerView
-        home_rv.setLayoutManager(layoutManager);
-        home_rv.post(() -> adapter.setOnclick(new MainOptionAdapter.ClickInterface() {
-            @Override
-            public void onButtonClick(View view, int position) {
-                onItemClick(view,position);
-//                Toast.makeText(MainActivity.this, "button pos:"+position +"val:"+list.get(position).getId(), Toast.LENGTH_SHORT).show();
+        public void setDialog(DialogInterface dialogInterface) {
+            this.Dialog = new WeakReference<>(dialogInterface);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {//联系上了，msg.what肯定是DISMISS
+                case 1:
+                    ((DialogInterface.OnDismissListener) msg.obj).onDismiss(Dialog.get());//msg的obj就是Listener呗，调用其中的onDismiss方法。
+                    break;
             }
-
-            @Override
-            public void onItemClick(View view, int position) {
-                ParameterListActivity.launch(R.string.ECU_working_parameter2,"机器模式");
-             }
-        }));
+        }
     }
-
+    private void initRecyclerView(){
+        for(int i=0;i<9;i++){
+            items.add(new MainOption(R.drawable.ic_tmp_83,"速度参数"+i,i));
+        }
+        adapter = new MultiTypeAdapter(items);
+        Register.registerMainOptionGridItem(adapter);
+        recyclerView.setAdapter(adapter);
+        final GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
+        recyclerView.setLayoutManager(layoutManager);
+    }
 
     /**
      * Toolbar的折叠特效
-     *
      */
     private void initToolbarAlpha(){
-
-        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        mAppBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
 //                System.out.println("verticalOffset = [" + verticalOffset + "]" + "{" + Math.abs(verticalOffset) + "}" + "{:" + appBarLayout.getTotalScrollRange() + "}");
-                if (verticalOffset == 0) {
-                    //完全展开
+            if (verticalOffset == 0) {
+                //完全展开
 //                    Log.i(TAG, "onOffsetChanged: 完全展开");
-
-                    toolbar_top.setVisibility(View.VISIBLE);
-                    toolbar_folding.setVisibility(View.GONE);
-                    setToolbarTopAlpha(255);
-                } else if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()) {
-                    //appBarLayout.getTotalScrollRange() == 200
-                    //完全折叠
+                toolbar_top.setVisibility(View.VISIBLE);
+                toolbar_folding.setVisibility(View.GONE);
+                setToolbarTopAlpha(255);
+            } else if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()) {
+                //appBarLayout.getTotalScrollRange() == 200
+                //完全折叠
 //                    Log.i(TAG, "onOffsetChanged: 完全折叠");
-
-                    toolbar_top.setVisibility(View.GONE);
-                    toolbar_folding.setVisibility(View.VISIBLE);
-                    setToolbarFoldingAlpha(255);
-                } else {//0~200上滑下滑
-                    if (toolbar_top.getVisibility() == View.VISIBLE) {
+                toolbar_top.setVisibility(View.GONE);
+                toolbar_folding.setVisibility(View.VISIBLE);
+                setToolbarFoldingAlpha(255);
+            } else {//0~200上滑下滑
+                if (toolbar_top.getVisibility() == View.VISIBLE) {
 //                        //操作Toolbar1
-                        int alpha = 300 - 150 - Math.abs(verticalOffset);
+                    int alpha = 300 - 150 - Math.abs(verticalOffset);
 //                        Log.i("alpha0~200上滑下滑:", alpha + "");
-                        setToolbarTopAlpha(alpha);
-
-                    } else if (toolbar_folding.getVisibility() == View.VISIBLE) {
-                        if (Math.abs(verticalOffset) > 0 && Math.abs(verticalOffset) < 200) {
-                            toolbar_top.setVisibility(View.VISIBLE);
-                            toolbar_folding.setVisibility(View.GONE);
-                            setToolbarTopAlpha(255);
-                        }
-//                        //操作Toolbar2
-                        int alpha = (int) (255 * (Math.abs(verticalOffset) / 100f));
-                        setToolbarFoldingAlpha(alpha);
+                    setToolbarTopAlpha(alpha);
+                } else if (toolbar_folding.getVisibility() == View.VISIBLE) {
+                    if (Math.abs(verticalOffset) > 0 && Math.abs(verticalOffset) < 200) {
+                        toolbar_top.setVisibility(View.VISIBLE);
+                        toolbar_folding.setVisibility(View.GONE);
+                        setToolbarTopAlpha(255);
                     }
+//                        //操作Toolbar2
+                    int alpha = (int) (255 * (Math.abs(verticalOffset) / 100f));
+                    setToolbarFoldingAlpha(alpha);
                 }
             }
         });
     }
 
     /**
-     * @param alpha
+     * @param alpha don't care about it
      */
     private void setToolbarTopAlpha(int alpha) {
         mImgZhangdan.getDrawable().setAlpha(alpha);

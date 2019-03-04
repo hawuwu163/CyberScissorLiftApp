@@ -60,8 +60,8 @@ public class BleDeviceViewBinder extends ItemViewBinder<BleDevice, BleDeviceView
         }
         Log.d(TAG, "onBindViewHolder: " + connectedAddress + " " + hasConnected + " " + address);
 
-        if (hasConnected) {
-            if (connectedAddress.equals(address)) {//已连接设备时,已连接的设备显示断开连接按钮
+        if (hasConnected) {//已连接设备时
+            if (connectedAddress.equals(address)) {//已连接的设备显示断开连接按钮
                 setHolderVisibility(holder,false,true);
                 holder.disconnect.setOnClickListener(v -> {
                     LeProxy.getInstance().disconnect(address);
@@ -70,12 +70,18 @@ public class BleDeviceViewBinder extends ItemViewBinder<BleDevice, BleDeviceView
             } else {
                 setHolderVisibility(holder, false, false);//未连接的设备连接和断开连接的按钮都不显示
             }
-        } else {
-            setHolderVisibility(holder,true,false);//未连接设备时所有设备均显示连接的按钮
+        } else {//未连接设备时
+            setHolderVisibility(holder,true,false);//所有设备均显示连接的按钮
             holder.connect.setOnClickListener(v -> {
                 LeScanner.stopScan();
                 LeProxy.getInstance().connect(address, false);//点击连接按钮后更新按钮为断开连接
                 setHolderVisibility(holder,false,true);
+                new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                };
             });
         }
     }

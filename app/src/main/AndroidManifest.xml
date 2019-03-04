@@ -9,8 +9,9 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:name=".InitApp"
         android:allowBackup="true"
@@ -24,7 +25,7 @@
             android:name=".module.bluetooth.BleListActivity"
             android:configChanges="orientation|screenSize|uiMode"
             android:label="选择设备"
-            android:theme="@style/AppTheme.NoActionBar.Slidable"/>
+            android:theme="@style/AppTheme.NoActionBar.Slidable" />
         <activity
             android:name=".module.parameter.ParameterListActivity"
             android:configChanges="orientation|screenSize|uiMode"
@@ -41,12 +42,10 @@
             </intent-filter>
         </activity>
 
-
         <service
             android:name="com.ble.ble.BleService"
             android:enabled="true"
-            android:exported="false"/>
-
+            android:exported="false" />
     </application>
 
 </manifest>

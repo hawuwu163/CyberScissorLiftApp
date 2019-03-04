@@ -22,6 +22,7 @@ import com.contrarywind.interfaces.IPickerViewData;
 import com.cyber.ScissorLiftApp.module.parameter.ParameterListFragment;
 import com.cyber.ScissorLiftApp.R;
 import com.cyber.ScissorLiftApp.module.parameter.ParameterIntegerBean;
+import com.cyber.ScissorLiftApp.module.parameter.ParameterListPresenter;
 import com.cyber.ScissorLiftApp.util.ErrorActionUtil;
 import com.cyber.ScissorLiftApp.util.RxBus;
 
@@ -41,11 +42,11 @@ import me.drakeet.multitype.ItemViewBinder;
  */
 public class ParameterListViewBinder extends ItemViewBinder<ParameterIntegerBean,ParameterListViewBinder.ViewHolder> {
     private static final String TAG = "ParameterListViewBinder";
-    List<ParameterIntegerBean> list;
-
-    public ParameterListViewBinder(List<?> list) {
-        this.list = (List<ParameterIntegerBean>)list;
-        Log.d(TAG, "ParameterListViewBinder: list:"+list.size());
+    private static ParameterListPresenter presenter;
+    public ParameterListViewBinder(ParameterListPresenter presenter) {
+        if (this.presenter == null) {
+            this.presenter = presenter;
+        }
     }
 
     @NonNull
@@ -104,8 +105,10 @@ public class ParameterListViewBinder extends ItemViewBinder<ParameterIntegerBean
                     holder.pvOptions.show();
                 });
             } else {//开关量
-                holder.parameterSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> RxBus.getInstance().post(ParameterListFragment.TAG, holder.getAdapterPosition() + " "+(isChecked? "1":"0")));
-
+                holder.parameterSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    ParameterIntegerBean ref = (ParameterIntegerBean) presenter.getParameterIntegerBeanList().get(holder.getAdapterPosition());
+                    ref.setVal(isChecked? 1:0);
+                });
             }
         }
     }
@@ -117,7 +120,8 @@ public class ParameterListViewBinder extends ItemViewBinder<ParameterIntegerBean
             //返回的分别是三个级别的选中位置
             String tx = limit.get(options1).getPickerViewText();
             holder.parameterVal.setText(tx);
-            RxBus.getInstance().post(ParameterListFragment.TAG, holder.getAdapterPosition() + " "+tx);
+            ParameterIntegerBean ref = (ParameterIntegerBean) presenter.getParameterIntegerBeanList().get(holder.getAdapterPosition());
+            ref.setVal(Integer.valueOf(tx));
         })
                 .setSubmitText("确定")//确定按钮文字
                 .setCancelText("取消")//取消按钮文字

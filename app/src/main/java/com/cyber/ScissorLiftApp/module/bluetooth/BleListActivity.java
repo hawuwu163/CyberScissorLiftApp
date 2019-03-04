@@ -1,10 +1,12 @@
 package com.cyber.ScissorLiftApp.module.bluetooth;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -36,4 +38,6 @@ public class BleListActivity extends BaseWithBleActivity {
 
     }
 
+    @Override
+    public void onReceiveBleBroadcast(Context context, @NonNull Intent intent) {}
 }

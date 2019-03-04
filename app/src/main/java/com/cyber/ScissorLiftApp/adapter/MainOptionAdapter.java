@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cyber.ScissorLiftApp.R;
-import com.cyber.ScissorLiftApp.module.bean.MainOption;
+import com.cyber.ScissorLiftApp.module.mainOption.MainOption;
 
 import java.util.List;
 
