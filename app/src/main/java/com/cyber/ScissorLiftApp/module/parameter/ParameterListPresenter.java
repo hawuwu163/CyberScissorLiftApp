@@ -39,7 +39,7 @@ public class ParameterListPresenter<T extends IProtocol> implements IParameterLi
      */
     @Override
     public void doLoadData(String jsonList,String mode,String ...arg) {
-        if ("0".equals(mode)) {
+        if ("0".equals(mode)) { //只读模式loadData会从蓝牙读取数据,参数固定内容从json读取,参数设置为不可修改
             try {
                 if(this.jsonList==null){
                     this.jsonList = jsonList;
@@ -59,23 +59,10 @@ public class ParameterListPresenter<T extends IProtocol> implements IParameterLi
 //            list.add(new ParameterIntegerBean("机器模式","机器模式的描述",3,"单位",0, tmp));
                 e.printStackTrace();
             }
-        } else if ("1".equals(mode)) {
-            List<ParameterIntegerBean> list = new ArrayList<>(parameterIntegerBeanList);
-            if (arg.length == 2) {
-                String rec = "";
-                for(String s : arg) rec += s;
-                Log.d(TAG, "doLoadData: "+ rec);
-                int[] args = new int[arg.length];
-                for (int i = 0; i < arg.length; i++) {
-                    args[i] = Integer.parseInt(arg[i]);
-                }
-                for (int i = 0; i < arg.length; i+=2) {
-                    list.get(args[i]).setVal(args[i+1]);
-                }
-            }
+        } else if ("1".equals(mode)) {//编辑模式loadData会将参数列表设置为可修改
             //3.修改完成后重新设置adapter
-            for (ParameterIntegerBean bean:list) if( bean.getType() != 0 )bean.setEnabled(true);
-            doSetAdapter(list);
+            for (ParameterIntegerBean bean:parameterIntegerBeanList) if( bean.getType() != 0 )bean.setEnabled(true);
+            doSetAdapter(parameterIntegerBeanList);
         }
     }
     @Override
@@ -127,4 +114,8 @@ public class ParameterListPresenter<T extends IProtocol> implements IParameterLi
         view.onHideLoading();
         view.onError(val);
     }
+    public List<ParameterIntegerBean> getParameterIntegerBeanList() {
+        return parameterIntegerBeanList;
+    }
+
 }
